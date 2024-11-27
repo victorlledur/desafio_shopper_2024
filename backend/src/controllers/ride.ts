@@ -62,10 +62,10 @@ const rideController = {
       const { costumerId, origins, destinations }: RideRequest = req.body;
 
       if (!costumerId || costumerId.length === 0 || !origins || origins.length === 0 || !destinations || destinations.length === 0) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+        return res.status(400).json({ error: { message:'Todos os campos são obrigatórios' }});
       }
       if (origins === destinations) {
-        return res.status(401).json({ error: 'Os endereços de origem e destino, não podem ser o mesmo endereço' });
+        return res.status(401).json({ error:{ message:'Os endereços de origem e destino, não podem ser o mesmo endereço' }});
       }
       const apiKey: string = process.env.GOOGLE_API_KEY as string;
       const originCoords = await getCoordinates(origins, apiKey);
@@ -104,7 +104,7 @@ const rideController = {
       return res.status(200).json(Body);
     } catch (error) {
       console.error('Ocorreu um erro ao estimar viagem:', error);
-      return res.status(500).json({ error: 'Um erro ocorreu enquanto estimava a viagem' });
+      return res.status(500).json({ error: {message:'Um erro ocorreu enquanto estimava a viagem'} });
     }
   },
 
@@ -112,13 +112,12 @@ const rideController = {
     try {
 
       const { costumerId, origin, destination, distance, duration, driverId, value } = req.body;
-      console.log(costumerId, origin, destination, distance, duration, driverId, value)
 
       if (origin === destination) {
-        return res.status(401).json({ error: 'Os endereços de origem e destino, não podem ser o mesmo endereço' });
+        return res.status(401).json({ error: {message:'Os endereços de origem e destino, não podem ser o mesmo endereço' }});
       }
       if (!costumerId || costumerId.length === 0 || !origin || origin.length === 0 || !destination || destination.length === 0) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+        return res.status(400).json({ error: {message:'Todos os campos são obrigatórios'} });
       }
       const confirmedCostumer = await prisma.costumer.findFirst({
         where: {
@@ -126,7 +125,7 @@ const rideController = {
         }
       })
       if (!confirmedCostumer) {
-        return res.status(400).json({ error: 'Cliente não encontrado' });
+        return res.status(400).json({ error: {message: 'Cliente não encontrado'} });
       }
       const confirmedDriver = await prisma.driver.findFirst({
         where: {
@@ -134,10 +133,10 @@ const rideController = {
         }
       })
       if (!confirmedDriver) {
-        return res.status(404).json({ error: 'Motorista não encontrado' });
+        return res.status(404).json({ error: {message: 'Motorista não encontrado'} });
       }
       if (confirmedDriver.minkm > distance) {
-        return res.status(406).json({ error: 'Quilometragem inválida para o motorista' });
+        return res.status(406).json({ error: {message: 'Quilometragem inválida para o motorista'} });
       }
       const today = Date.now();
       const formatedDate = new Date(today)
@@ -160,20 +159,19 @@ const rideController = {
 
     } catch (error) {
       console.error('Erro ao confirmar a viagem:', error);
-      return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+      return res.status(400).json({ error: {message:'Os dados fornecidos no corpo da requisição são inválidos'} });
     }
   },
 
   async findRides(req: Request, res: Response): Promise<any> {
     try {
       const { costumerId, driverId } = req.params;
-      console.log(costumerId, driverId)
 
-      // if (typeof costumerId !== 'string') {
-      //   return res.status(400).json("O parâmetro 'costumerId' deve ser uma string");
-      // }
+      if (typeof costumerId !== 'string') {
+        return res.status(400).json({error: {message:"O parâmetro 'costumerId' deve ser uma string"}});
+      }
       if(!costumerId || costumerId.length === 0){
-        res.status(400).json("A id do usuario não pode estar em branco")
+        res.status(400).json({error: {message:"A id do usuario não pode estar em branco"}})
       }
       const confirmedDriver = await prisma.driver.findFirst({
         where:{
@@ -181,7 +179,7 @@ const rideController = {
         }
       })
       if(!confirmedDriver){
-        res.status(404).json("Motorista não encontrado")
+        res.status(404).json({error: {message:"Motorista não encontrado"}})
       }
 
       const rides = await prisma.ride.findMany({
@@ -196,7 +194,7 @@ const rideController = {
 
       return res.status(200).json(rides);
     } catch (error) {
-      res.status(400).json("Viagens não encontradas")
+      res.status(400).json({error: {message:"Viagens não encontradas"}})
     }
   },
 

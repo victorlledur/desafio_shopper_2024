@@ -13,6 +13,8 @@ interface FormValues {
 const Home = () => {
     const navigate = useNavigate();
 
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [formData, setFormData] = useState<FormValues>({
         costumerId: '',
         origins: '',
@@ -36,8 +38,12 @@ const Home = () => {
             localStorage.setItem('destination', formData.destinations)
             localStorage.setItem('search', jsonObject)
             navigate(`/drivers`);
-        } catch (error) {
-            console.error('Erro ao enviar a requisição:', error);
+        } catch (error: any) {
+            if (error.response && error.response.data) {
+                setErrorMessage(error.response.data.error.message);
+              } else {
+                setErrorMessage('Ocorreu um erro inesperado.');
+              }
         }
     }
 
@@ -76,7 +82,9 @@ const Home = () => {
                         value={formData.destinations}
                         onChange={handleChange}
                     />
-
+                    <div>
+                    {errorMessage && <p>{errorMessage}</p>}
+                    </div>
                     <SearchButton type="submit">Buscar</SearchButton>
                 </Form>
             </FormDiv>

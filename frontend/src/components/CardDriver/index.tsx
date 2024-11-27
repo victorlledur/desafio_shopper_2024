@@ -45,7 +45,7 @@ function CardDriver(props: CardDriverProps) {
 
     } catch (error) {
       console.error('Error confirming ride:', error);
-
+      alert("Erro ao confirmar a viagem, tente novamente")
 
     } finally {
       setIsConfirming(false);

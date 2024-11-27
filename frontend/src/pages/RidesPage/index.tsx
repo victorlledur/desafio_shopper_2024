@@ -14,6 +14,9 @@ interface Driver {
 
 const RidesPage = () => {
     const navigate = useNavigate()
+
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [drivers, setDrivers] = useState<Driver[]>([]);
 
     useEffect(() => {
@@ -43,14 +46,22 @@ const RidesPage = () => {
     const handleSubmit = async (event: any) => {
         try {
             event.preventDefault();
+            if(!costumerId){
+                setErrorMessage("Seu ID de usuario é obrigatório")
+                return Error
+            }
             const url = `/rides/${costumerId}/${driverId ? driverId : ''}`;
             event.stopPropagation()
             const response = await listRides(url);
             const data = response.data;
             localStorage.setItem('rides', JSON.stringify(data));
             navigate(`/showrides`);
-        } catch (error) {
-            console.error('Erro ao buscar viagens:', error);
+        } catch (error: any) {
+            if (error.response && error.response.data) {
+                setErrorMessage(error.response.data.error.message);
+            } else {
+                setErrorMessage('Ocorreu um erro inesperado.');
+            }
         }
     }
 
@@ -82,6 +93,9 @@ const RidesPage = () => {
                                 />
                             ))}
                         </CardsDiv>
+                    </div>
+                    <div>
+                    {errorMessage && <p>{errorMessage}</p>}
                     </div>
                     <div className="search-buttons">
                         <SearchButton1 type='submit'>Buscar com motorista selecionado</SearchButton1>
