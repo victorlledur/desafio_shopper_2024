@@ -91,7 +91,7 @@ const rideController = {
         value: driver.value,
       }));
 
-      const responseBody = {
+      const Body = {
         origin: { latitude: originCoords.lat, longitude: originCoords.lng },
         destination: { latitude: destinationCoords.lat, longitude: destinationCoords.lng },
         distance: distanceInKm,
@@ -99,8 +99,9 @@ const rideController = {
         options,
         routeResponse: distanceMatrixResponse,
       };
+      const responseBody = JSON.stringify(Body)
 
-      return res.status(200).json({ responseBody });
+      return res.status(200).json(Body);
     } catch (error) {
       console.error('Ocorreu um erro ao estimar viagem:', error);
       return res.status(500).json({ error: 'Um erro ocorreu enquanto estimava a viagem' });
@@ -111,6 +112,7 @@ const rideController = {
     try {
 
       const { costumerId, origin, destination, distance, duration, driverId, value } = req.body;
+      console.log(costumerId, origin, destination, distance, duration, driverId, value)
 
       if (origin === destination) {
         return res.status(401).json({ error: 'Os endereços de origem e destino, não podem ser o mesmo endereço' });
@@ -164,11 +166,12 @@ const rideController = {
 
   async findRides(req: Request, res: Response): Promise<any> {
     try {
-      const { costumerId, driverId } = req.query;
+      const { costumerId, driverId } = req.params;
+      console.log(costumerId, driverId)
 
-      if (typeof costumerId !== 'string') {
-        return res.status(400).json("O parâmetro 'costumerId' deve ser uma string");
-      }
+      // if (typeof costumerId !== 'string') {
+      //   return res.status(400).json("O parâmetro 'costumerId' deve ser uma string");
+      // }
       if(!costumerId || costumerId.length === 0){
         res.status(400).json("A id do usuario não pode estar em branco")
       }
@@ -191,7 +194,7 @@ const rideController = {
         }
       });
 
-      res.json(rides);
+      return res.status(200).json(rides);
     } catch (error) {
       res.status(400).json("Viagens não encontradas")
     }
