@@ -10,7 +10,8 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  //String do banco explicita, apenas para avaliação automatizada, em produção estaria em uma variável de ambiente
+  url      = "mongodb+srv://shopper:desafioshopper@shopper.fiuvl.mongodb.net/shopper?retryWrites=true&w=majority&appName=shopper"
 }
 
 model Driver {
