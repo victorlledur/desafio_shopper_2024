@@ -6,7 +6,6 @@ import { Container, CardsDiv, MapDiv } from './styles';
 function DriversPage() {
     const data = localStorage.getItem('search')
     const drivers = JSON.parse(data as any)
-    console.log(data, drivers, drivers.origin.latitude, drivers.origin.longitude)
     const key = process.env.REACT_APP_GOOGLE_MAPS_API_KEY
     const midLat = (drivers.origin.latitude + drivers.destination.latitude) /2;
     const midLng = (drivers.origin.longitude + drivers.destination.longitude) /2;

@@ -30,7 +30,6 @@ const RidesPage = () => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { value } = event.target;
-        console.log("valor do input", value);
         setCostumerId(value);
     };
 

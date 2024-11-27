@@ -9,7 +9,7 @@ export async function estimateRide(formData: any) {
 }
 
 export function createRide(req: any) {
-    return baseApi.post("/ride/confirm", {
+    return baseApi.patch("/ride/confirm", {
         costumerId: req.costumerId,
         date: "",
         origin: req.origin,
